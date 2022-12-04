@@ -166,3 +166,118 @@ void display(void)
     }
     fclose(fptr);
 }
+
+void update(void)
+{
+    FILE *fptr = NULL;
+    fptr = fopen("ADD_PATIENT.txt", "r");
+    FILE *fptr1 = NULL;
+    fptr1 = fopen("Updated_Patient.txt", "w");
+    int a, ad, found = 0;
+    int flag = 1;
+    printf("Enter Patient's id you want to update: ");
+    scanf("%d", &ad);
+    found = rep_check(ad);
+    if (found == 1)
+    {
+        while (fread(&patient_info, sizeof(struct Patient) + 1, 1, fptr))
+        {
+            flag = 1;
+            puts(patient_info.id);
+            sscanf(patient_info.id, "%d", &a);
+            if (ad == a)
+            {
+                printf("Enter Patient's id: ");
+                fflush(stdin);
+                gets(patient_info.id);
+                printf("Enter Patient's Name: ");
+                gets(patient_info.name);
+                printf("Enter Patient's CNIC: ");
+                gets(patient_info.cnic);
+                printf("Enter Patient's Phone Number: ");
+                gets(patient_info.phnum);
+                printf("Enter Patient's Disease: ");
+                fflush(stdin);
+                gets(patient_info.disease);
+                printf("Is the patient admitted?(Y or N) ");
+                scanf("%c", &patient_info.is_adm);
+                fwrite(&patient_info, sizeof(struct Patient), 1, fptr1);
+                fprintf(fptr1, "\n");
+                flag = 0;
+            }
+            if (flag == 1)
+            {
+                fwrite(&patient_info, sizeof(struct Patient), 1, fptr1);
+                fprintf(fptr1, "\n");
+            }
+        }
+    }
+    else
+    {
+        printf("No record found\n");
+    }
+
+    fclose(fptr);
+    fclose(fptr1);
+    remove("ADD_PATIENT.txt");
+    rename("Updated_Patient.txt", "ADD_PATIENT.txt");
+}
+void search(void)
+{
+    FILE *fptr;
+    fptr = fopen("ADD_PATIENT.txt", "r");
+    int ad, found = 0, a;
+    printf("enter the patient you want to search :");
+    scanf("%d", &ad);
+    found = rep_check(ad);
+    if (found == 1)
+    {
+        printf("\n_________________________________________________________\n\n\n");
+        while (fread(&patient_info, sizeof(struct Patient) + 1, 1, fptr))
+        {
+            sscanf(patient_info.id, "%d", &a);
+            if (ad == a)
+            {
+                printf("PATIENT ID IS :");
+                puts(patient_info.id);
+                printf("PATIENT NAME IS :");
+                puts(patient_info.name);
+                printf("PATIENT CNIC IS :");
+
+                puts(patient_info.cnic);
+                printf("PATIENT DISEASE IS :");
+
+                puts(patient_info.disease);
+                printf("PATIENT PHONE NUMBER IS :");
+
+                puts(patient_info.phnum);
+                printf("PATIENT ADMISSION STATUS IS :");
+                printf("%c", patient_info.is_adm);
+                break;
+            }
+        }
+        printf("\n_________________________________________________________\n");
+    }
+    else
+    {
+        printf("\n\n*_ *_ PATIENT NOT FOUND_ *_ *\n");
+    }
+    fclose(fptr);
+}
+int rep_check(int z)
+{
+    FILE *fptr = NULL;
+    fptr = fopen("ADD_PATIENT.txt", "r");
+    int found = 0, a;
+    while (fread(&patient_info, sizeof(struct Patient) + 1, 1, fptr))
+    {
+        sscanf(patient_info.id, "%d", &a);
+        if (z == a)
+        {
+            found = 1;
+            break;
+        }
+    }
+    return found;
+    fclose(fptr);
+}
